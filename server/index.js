@@ -8,6 +8,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import MMI from "./models/MMI.js";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,20 +23,20 @@ app.use(express.json());
 
 const io = new Server(server, {
   cors: {
-    origin: ["*"],
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true
   }
 });
 
-const DB_URL_ENV = process.env.DB_URL
-
+const DB_URL_ENV =  process.env.DB_URL_ENV 
 // Connect to MongoDB
 mongoose.connect(DB_URL_ENV)
   .then(() => console.log("✅ MongoDB connected " + mongoose.connection.host))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
-const TARGET_URL = process.env.TARGET_URL;
+const TARGET_URL = process.env.TARGET_URL || "https://www.tickertape.in/market-mood-index";
+  ;
 const SELECTOR = 'span[class*="number"]';
 const POLL_INTERVAL = 15000;
 
@@ -49,8 +51,7 @@ async function startScraper() {
   const page = await browser.newPage();
   await page.goto(TARGET_URL, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.waitForSelector(SELECTOR, { timeout: 20000 });
-  console.log("Page loaded successfully");
-
+  console.log("✅ Page loaded successfully");
 
   async function fetchData() {
     try {
