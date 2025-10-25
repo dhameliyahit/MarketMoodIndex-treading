@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tickertape MMI Live</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    h1 { font-size: 2.5rem; color: #0a9396; }
+    p { font-size: 1.2rem; color: #555; }
+  </style>
+</head>
+<body>
+  <h1>Market Mood Index (Live)</h1>
+  <p id="mmi">Loading...</p>
+  <p id="time"></p>
+
+  <script>
+    const socket = io();
+    socket.on("mmi-update", data => {
+      document.getElementById("mmi").textContent = data.value;
+      document.getElementById("time").textContent = "Last updated: " + data.time;
+    });
+  </script>
+</body>
+</html>
