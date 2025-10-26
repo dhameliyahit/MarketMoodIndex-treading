@@ -17,7 +17,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = http.createServer(app);
 
-// Add CORS middleware for frontend communication
 app.use(cors());
 app.use(express.json());
 
@@ -29,14 +28,24 @@ const io = new Server(server, {
   }
 });
 
-const DB_URL_ENV =  process.env.DB_URL_ENV 
+const DB_URL_ENV = process.env.DB_URL_ENV
 // Connect to MongoDB
 mongoose.connect(DB_URL_ENV)
   .then(() => console.log("✅ MongoDB connected " + mongoose.connection.host))
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
+app.get("/", (req, res) => {
+  try {
+    res.send("<h1>OK</h1>")
+  } catch (error) {
+    console.error("❌ Error serving index.html:", error);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+
 const TARGET_URL = process.env.TARGET_URL || "https://www.tickertape.in/market-mood-index";
-  ;
+;
 const SELECTOR = 'span[class*="number"]';
 const POLL_INTERVAL = 15000;
 
